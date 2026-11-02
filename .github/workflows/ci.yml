@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Node ${{ matrix.node }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit and CLI tests
+        run: npm test
+
+      - name: Run the reporter on the example project (list mode)
+        run: npx playwright test --list -c example
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps --only-shell chromium
+
+      - name: Run real browser tests with the reporter
+        run: npm run e2e
+
+      - name: Verify the reporter output
+        run: npm run e2e:verify
+
+      - name: Check package contents
+        run: npm pack --dry-run
+
+      - name: Upload reports
+        if: ${{ always() && matrix.node == 24 }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: fragility-reports
+          path: |
+            e2e/fragility-report.*
+            e2e/test-results
+            example/fragility-report.*
+          if-no-files-found: ignore
+          retention-days: 14
