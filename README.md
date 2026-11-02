@@ -1,6 +1,6 @@
-# playwright-locator-fragility
+# playwright-locator-analyses
 
-[![npm version](https://img.shields.io/npm/v/playwright-locator-fragility.svg)](https://www.npmjs.com/package/playwright-locator-fragility)
+[![npm version](https://img.shields.io/npm/v/playwright-locator-analyses.svg)](https://www.npmjs.com/package/playwright-locator-analyses)
 [![CI](https://github.com/laerteneto/playwright-locator-analyses/actions/workflows/ci.yml/badge.svg)](https://github.com/laerteneto/playwright-locator-analyses/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/laerteneto/playwright-locator-analyses/blob/main/LICENSE)
 
@@ -36,11 +36,11 @@ When it runs as a reporter, it also shows whether each test **failed** or was **
 ## Installation
 
 ```bash
-pnpm add -D playwright-locator-fragility
+pnpm add -D playwright-locator-analyses
 # or
-npm i -D playwright-locator-fragility
+npm i -D playwright-locator-analyses
 # or
-yarn add -D playwright-locator-fragility
+yarn add -D playwright-locator-analyses
 ```
 
 ## Usage as a reporter
@@ -50,7 +50,7 @@ yarn add -D playwright-locator-fragility
 export default defineConfig({
   reporter: [
     ['list'],
-    ['playwright-locator-fragility', {
+    ['playwright-locator-analyses', {
       htmlFile: 'fragility-report.html',   // optional
       outputFile: 'fragility-report.json', // optional
       top: 10,
@@ -140,7 +140,7 @@ await page.click('.btn-legacy'); // locator-fragility-ignore
 ## Programmatic API
 
 ```ts
-import { analyzeFiles, buildReport, formatConsole, scoreSelector, ScoreContext } from 'playwright-locator-fragility';
+import { analyzeFiles, buildReport, formatConsole, scoreSelector, ScoreContext } from 'playwright-locator-analyses';
 
 const report = buildReport(analyzeFiles(['tests/login.spec.ts']));
 console.log(formatConsole(report));

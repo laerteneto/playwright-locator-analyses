@@ -1,5 +1,5 @@
 {
-  "name": "playwright-locator-fragility",
+  "name": "playwright-locator-analyses",
   "version": "0.1.1",
   "description": "Playwright reporter and linter that grades locator fragility (A–F) and ranks the tests most likely to break.",
   "license": "MIT",

@@ -13,7 +13,7 @@ export interface LocatorFragilityReporterOptions extends AnalyzeOptions, OutputO
  * Playwright reporter. Statically analyzes the locators used by every test in the run
  * (including page objects and helpers) and prints a ranking of the tests most likely to break.
  *
- *   reporter: [['list'], ['playwright-locator-fragility', { htmlFile: 'fragility.html' }]]
+ *   reporter: [['list'], ['playwright-locator-analyses', { htmlFile: 'fragility.html' }]]
  */
 export default class LocatorFragilityReporter implements Reporter {
   private config?: FullConfig;
