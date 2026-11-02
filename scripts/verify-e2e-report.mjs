@@ -1,4 +1,4 @@
-// Checks the JSON written by the reporter during the e2e run (npm run e2e).
+// Checks the JSON written by the reporter during the e2e run (pnpm run e2e).
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 

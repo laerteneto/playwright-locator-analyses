@@ -1,13 +1,19 @@
 {
   "name": "playwright-locator-fragility",
   "version": "0.1.0",
-  "description": "Playwright reporter + linter that scores locator fragility and ranks the tests most likely to break.",
+  "description": "Playwright reporter and linter that grades locator fragility (A–F) and ranks the tests most likely to break.",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
-    ".": "./dist/index.js",
-    "./reporter": "./dist/reporter.js",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./reporter": {
+      "types": "./dist/reporter.d.ts",
+      "default": "./dist/reporter.js"
+    },
     "./package.json": "./package.json"
   },
   "bin": {
@@ -22,17 +28,25 @@
     "locator",
     "selector",
     "flaky",
-    "lint"
+    "lint",
+    "playwright-reporter",
+    "test-automation",
+    "e2e",
+    "xpath",
+    "css-selector",
+    "cli"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "vitest run",
-    "example": "npm run build && playwright test --list -c example",
+    "example": "pnpm run build && playwright test --list -c example",
     "typecheck": "tsc -p tsconfig.check.json",
-    "pretest": "npm run build",
+    "pretest": "pnpm run build",
     "e2e": "playwright test -c e2e",
     "e2e:verify": "node scripts/verify-e2e-report.mjs e2e/fragility-report.json",
-    "docs:images": "npm run build && node scripts/screenshots.mjs"
+    "docs:images": "pnpm run build && node scripts/screenshots.mjs",
+    "prepack": "pnpm run build",
+    "prepublishOnly": "pnpm run typecheck && pnpm test"
   },
   "engines": {
     "node": ">=20"
@@ -52,5 +66,15 @@
     "@playwright/test": "^1.64.1",
     "@types/node": "^26.6.6",
     "vitest": "^5.1.0"
-  }
+  },
+  "author": "Laerte Mello",
+  "homepage": "https://github.com/laerteneto/playwright-locator-analyses#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/laerteneto/playwright-locator-analyses.git"
+  },
+  "bugs": {
+    "url": "https://github.com/laerteneto/playwright-locator-analyses/issues"
+  },
+  "packageManager": "pnpm@11.20.0"
 }

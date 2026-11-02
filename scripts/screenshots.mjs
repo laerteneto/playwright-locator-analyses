@@ -1,5 +1,5 @@
 // Generates the README screenshots from the example project.
-// Usage: npm run build && npm run docs:images
+// Usage: pnpm run docs:images
 import { chromium } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';

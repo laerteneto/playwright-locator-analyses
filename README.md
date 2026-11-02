@@ -1,20 +1,24 @@
 # playwright-locator-fragility
 
+[![npm version](https://img.shields.io/npm/v/playwright-locator-fragility.svg)](https://www.npmjs.com/package/playwright-locator-fragility)
+[![CI](https://github.com/laerteneto/playwright-locator-analyses/actions/workflows/ci.yml/badge.svg)](https://github.com/laerteneto/playwright-locator-analyses/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/laerteneto/playwright-locator-analyses/blob/main/LICENSE)
+
 Locator fragility analysis for Playwright. It works as a **reporter** (runs alongside `playwright test`) and as a **linter/CLI** (runs without executing tests, which makes it a good fit for CI).
 
 Every locator gets a grade from **A (robust)** to **F (fragile)**. Every test then gets a **risk score from 0 to 100**, and the result is a ranking of the tests most likely to break and of the locators most worth fixing.
 
 ### Console output
 
-The ranking printed by the CLI and the reporter, run on the [example project](example/):
+The ranking printed by the CLI and the reporter, run on the [example project](https://github.com/laerteneto/playwright-locator-analyses/tree/main/example):
 
-![Console output: tests ranked by risk, with the worst locator of each test and the locators most worth fixing](docs/images/console.png)
+![Console output: tests ranked by risk, with the worst locator of each test and the locators most worth fixing](https://raw.githubusercontent.com/laerteneto/playwright-locator-analyses/main/docs/images/console.png)
 
 ### HTML report
 
 With `htmlFile` (reporter) or `--html` (CLI), you get a report you can browse. Click a test to see each locator, its grade and the reasons behind it:
 
-![HTML report: summary cards and the test ranking, with the first test expanded to show its locators and reasons](docs/images/html-report.png)
+![HTML report: summary cards and the test ranking, with the first test expanded to show its locators and reasons](https://raw.githubusercontent.com/laerteneto/playwright-locator-analyses/main/docs/images/html-report.png)
 
 ## How it works
 
@@ -32,7 +36,11 @@ When it runs as a reporter, it also shows whether each test **failed** or was **
 ## Installation
 
 ```bash
+pnpm add -D playwright-locator-fragility
+# or
 npm i -D playwright-locator-fragility
+# or
+yarn add -D playwright-locator-fragility
 ```
 
 ## Usage as a reporter
@@ -149,16 +157,20 @@ scoreSelector('div > li:nth-child(2)', new ScoreContext()).score; // 95 (F)
 
 ## Development
 
-Requires Node 22 or 24 for development (the published package supports Node 20+).
+Development uses [pnpm](https://pnpm.io) (the version is pinned in `package.json`; run `corepack enable` to use it automatically) and Node 22 or 24. The published package supports Node 20+.
 
 ```bash
-npm run build       # compile to dist/
-npm run typecheck   # typecheck src, tests and examples
-npm test            # build, then unit and CLI tests (vitest)
-npm run example     # run the reporter on the example project (example/) via --list
-npm run e2e         # run real browser tests with the reporter (e2e/)
-npm run e2e:verify  # check the JSON report written by the e2e run
-npm run docs:images # regenerate the README screenshots in docs/images/
+pnpm install
+```
+
+```bash
+pnpm run build       # compile to dist/
+pnpm run typecheck   # typecheck src, tests and examples
+pnpm test            # build, then unit and CLI tests (vitest)
+pnpm run example     # run the reporter on the example project (example/) via --list
+pnpm run e2e         # run real browser tests with the reporter (e2e/)
+pnpm run e2e:verify  # check the JSON report written by the e2e run
+pnpm run docs:images # regenerate the README screenshots in docs/images/
 ```
 
 CI (`.github/workflows/ci.yml`) runs all of the above on Node 22 and 24 for every push to `main` and every pull request, and uploads the generated reports as artifacts. Dependabot (`.github/dependabot.yml`) checks npm packages and GitHub Actions weekly, with at most 5 open pull requests.

@@ -4,7 +4,7 @@ import os from 'os';
 import path from 'path';
 import { describe, expect, it } from 'vitest';
 
-// Runs the compiled CLI (npm test builds first via "pretest").
+// Runs the compiled CLI (pnpm test builds first via "pretest").
 const root = path.join(__dirname, '..');
 const cli = path.join(root, 'dist', 'cli.js');
 const run = (...args: string[]) =>

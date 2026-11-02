@@ -1,6 +1,7 @@
 # Weekly dependency updates, capped at 5 open pull requests in total
-# (4 for npm + 1 for GitHub Actions). Minor and patch updates are grouped
-# so they arrive as a single pull request per ecosystem.
+# (4 for packages + 1 for GitHub Actions). Minor and patch updates are grouped
+# so they arrive as a single pull request per ecosystem. The "npm" ecosystem
+# also covers pnpm: Dependabot reads and updates pnpm-lock.yaml.
 version: 2
 updates:
   - package-ecosystem: npm
