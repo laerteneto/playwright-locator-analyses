@@ -65,10 +65,12 @@ Tip: `npx playwright test --list` triggers the reporter without running any test
 ## Usage as a linter (CLI)
 
 ```bash
-npx locator-fragility tests/                      # ranking in the console
-npx locator-fragility tests/ --html report.html   # plus an HTML report
-npx locator-fragility tests/ --fail-on-risk 80    # exit code 1 if any test has risk >= 80
+npx playwright-locator-analyses tests/                     # ranking in the console
+npx playwright-locator-analyses tests/ --html report.html  # plus an HTML report
+npx playwright-locator-analyses tests/ --fail-on-risk 80   # exit code 1 if any test has risk >= 80
 ```
+
+`npx` downloads the tool if it isn't installed in your project, so you can try it without adding it first.
 
 | Option | Description |
 | --- | --- |
@@ -132,9 +134,9 @@ Squaring keeps tests full of good locators close to zero, while a single F locat
 ## Ignoring a locator
 
 ```ts
-// locator-fragility-ignore
+// playwright-locator-analyses-ignore
 await page.locator('#legacy-widget-12345').click();
-await page.click('.btn-legacy'); // locator-fragility-ignore
+await page.click('.btn-legacy'); // playwright-locator-analyses-ignore
 ```
 
 ## Programmatic API

@@ -52,7 +52,7 @@ const LEGACY_METHODS: Record<string, number> = {
   setInputFiles: 2, getAttribute: 2, dispatchEvent: 2, setChecked: 2, dragAndDrop: 2,
 };
 const PAGE_LIKE_TYPES = new Set(['Page', 'Frame', 'ElementHandle']);
-const IGNORE_MARKER = 'locator-fragility-ignore';
+const IGNORE_MARKER = 'playwright-locator-analyses-ignore';
 const MAX_DEPTH = 12;
 
 type FnNode = ts.FunctionLikeDeclaration;

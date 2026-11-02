@@ -17,6 +17,6 @@ test('filters by category', async ({ page }) => {
 
 test('opens details through an XPath', async ({ page }) => {
   await page.locator("//div[@class='product-card'][2]/following-sibling::div//a").click();
-  // locator-fragility-ignore
+  // playwright-locator-analyses-ignore
   await page.locator('#legacy-widget-12345').click();
 });

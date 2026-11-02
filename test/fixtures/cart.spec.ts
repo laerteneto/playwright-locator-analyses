@@ -20,7 +20,7 @@ test.describe('Cart', () => {
       const cart = new CartPage(page);
       await expect(cart.firstItem).toBeVisible();
       await cart.closePromo();
-      await page.click('.btn-legacy'); // locator-fragility-ignore
+      await page.click('.btn-legacy'); // playwright-locator-analyses-ignore
     });
   });
 });

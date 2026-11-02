@@ -5,7 +5,7 @@ import { analyzeFiles } from './analyzer';
 import { emitReport } from './output';
 import { buildReport } from './report';
 
-const HELP = `Usage: locator-fragility [paths...] [options]
+const HELP = `Usage: playwright-locator-analyses [paths...] [options]
 
 Scores the locators used by Playwright tests and ranks the tests most likely to break.
 Paths can be files or directories (default: current directory).

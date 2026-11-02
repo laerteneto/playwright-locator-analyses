@@ -46,7 +46,7 @@ export default class LocatorFragilityReporter implements Reporter {
       });
       report = buildReport(tests, { rootDir, hotspotMinScore: this.options.hotspotMinScore });
     } catch (error) {
-      console.error('[locator-fragility] Failed to analyze tests:', error);
+      console.error('[playwright-locator-analyses] Failed to analyze tests:', error);
       return undefined;
     }
 

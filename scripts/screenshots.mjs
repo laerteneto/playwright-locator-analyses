@@ -30,7 +30,7 @@ const terminal = `<!DOCTYPE html><html><body style="margin:0;background:#0d1117;
       <span style="width:12px;height:12px;border-radius:50%;background:#ffbd2e"></span>
       <span style="width:12px;height:12px;border-radius:50%;background:#27c93f"></span>
     </div>
-    <pre id="term" style="margin:0;padding:16px 20px;color:#e6edf3;font:13px/1.45 Menlo,'SF Mono',Consolas,monospace;white-space:pre"><span style="color:#56c8e8">$</span> npx locator-fragility tests/
+    <pre id="term" style="margin:0;padding:16px 20px;color:#e6edf3;font:13px/1.45 Menlo,'SF Mono',Consolas,monospace;white-space:pre"><span style="color:#56c8e8">$</span> npx playwright-locator-analyses tests/
 ${ansiToHtml(consoleText)}</pre>
   </div></body></html>`;
 

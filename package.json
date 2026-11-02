@@ -1,6 +1,6 @@
 {
   "name": "playwright-locator-analyses",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Playwright reporter and linter that grades locator fragility (A–F) and ranks the tests most likely to break.",
   "license": "MIT",
   "main": "dist/index.js",
@@ -17,7 +17,7 @@
     "./package.json": "./package.json"
   },
   "bin": {
-    "locator-fragility": "dist/cli.js"
+    "playwright-locator-analyses": "dist/cli.js"
   },
   "files": [
     "dist"

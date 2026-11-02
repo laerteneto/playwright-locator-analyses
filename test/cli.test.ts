@@ -14,7 +14,7 @@ describe('cli', () => {
   it('prints help', () => {
     const r = run('--help');
     expect(r.status).toBe(0);
-    expect(r.stdout).toContain('Usage: locator-fragility');
+    expect(r.stdout).toContain('Usage: playwright-locator-analyses');
   });
 
   it('ranks the example tests', () => {
@@ -33,7 +33,7 @@ describe('cli', () => {
   });
 
   it('writes JSON and HTML reports', () => {
-    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'locator-fragility-'));
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'playwright-locator-analyses-'));
     const json = path.join(dir, 'report.json');
     const html = path.join(dir, 'report.html');
     expect(run('example/tests', '--quiet', '--json', json, '--html', html).status).toBe(0);
