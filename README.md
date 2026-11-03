@@ -43,6 +43,73 @@ npm i -D playwright-locator-analyses
 yarn add -D playwright-locator-analyses
 ```
 
+## JavaScript and TypeScript
+
+It works the same way with both, and you can mix them in one project:
+
+- Test files can be `.ts`, `.js`, `.mjs`, `.cjs`, `.tsx` or `.jsx`.
+- Page objects and helpers are followed whether they are TypeScript classes or JavaScript classes (`this.submit = page.locator(...)` in the constructor, `module.exports` or `export`).
+- Import aliases are read from the nearest `tsconfig.json` or `jsconfig.json`. To use another file, pass `--tsconfig <file>` (CLI) or the `tsconfig` option (reporter).
+
+**Config**
+
+```ts
+// playwright.config.ts
+import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  reporter: [['list'], ['playwright-locator-analyses', { htmlFile: 'fragility-report.html' }]],
+});
+```
+
+```js
+// playwright.config.js
+const { defineConfig } = require('@playwright/test');
+
+module.exports = defineConfig({
+  reporter: [['list'], ['playwright-locator-analyses', { htmlFile: 'fragility-report.html' }]],
+});
+```
+
+**Page object**
+
+```ts
+// pages/login.page.ts
+import type { Locator, Page } from '@playwright/test';
+
+export class LoginPage {
+  readonly submit: Locator;
+
+  constructor(private readonly page: Page) {
+    this.submit = page.getByRole('button', { name: 'Sign in' }); // A
+  }
+
+  async login(email: string) {
+    await this.page.getByLabel('Email').fill(email); // A
+    await this.submit.click();
+  }
+}
+```
+
+```js
+// pages/login.page.js
+class LoginPage {
+  constructor(page) {
+    this.page = page;
+    this.submit = page.locator('form > div:nth-child(3) > button'); // F
+  }
+
+  async login(email) {
+    await this.page.locator('#email').fill(email); // B
+    await this.submit.click();
+  }
+}
+
+module.exports = { LoginPage };
+```
+
+Either way, a test that calls `await new LoginPage(page).login('ana@example.com')` is graded on the locators inside `login()`.
+
 ## Usage as a reporter
 
 ```ts
@@ -79,7 +146,7 @@ npx playwright-locator-analyses tests/ --fail-on-risk 80   # exit code 1 if any 
 | `--top <n>` | Number of tests in the ranking (default 10) |
 | `--top-locators <n>` | Number of "locators worth fixing" to show (default 5) |
 | `--fail-on-risk <0-100>` | Fail if any test has risk >= n |
-| `--tsconfig <file>` | tsconfig used to resolve imports/aliases (auto-detected) |
+| `--tsconfig <file>` | `tsconfig.json` or `jsconfig.json` used to resolve imports/aliases (default: the nearest one) |
 | `--test-id-attribute <attr>` | Custom test id attribute (e.g. `data-qa`) |
 | `--pattern <regex>` | Test file regex |
 
@@ -150,10 +217,12 @@ console.log(formatConsole(report));
 scoreSelector('div > li:nth-child(2)', new ScoreContext()).score; // 95 (F)
 ```
 
+In JavaScript: `const { analyzeFiles, buildReport, formatConsole } = require('playwright-locator-analyses');`.
+
 ## Limitations
 
 - The analysis is static: selectors built at runtime (from API responses, complex loops) are marked as "dynamic" (score 30).
-- To follow page objects across files, types must resolve. Install `@playwright/test` and, if you use import aliases, keep a `tsconfig.json`.
+- To follow page objects across files, types must resolve. Install `@playwright/test` and, if you use import aliases, keep a `tsconfig.json` or `jsconfig.json`.
 - Generated class and ID detection is heuristic. An unusual name may be misclassified; adjust `weights` or use the ignore comment.
 - Parameterized tests (`for (...) test(...)`) appear once in the static ranking.
 
