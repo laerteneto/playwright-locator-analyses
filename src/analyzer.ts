@@ -286,16 +286,15 @@ class Analyzer {
     if ((ts.isVariableDeclaration(decl) || ts.isPropertyAssignment(decl)) && decl.initializer) {
       result = this.locatorOfExpression(decl.initializer);
     } else if (ts.isPropertyDeclaration(decl)) {
-      result = decl.initializer
-        ? this.locatorOfExpression(decl.initializer)
-        : this.locatorFromConstructor(decl);
+      const value = decl.initializer ?? this.constructorAssignment(decl);
+      result = value ? this.locatorOfExpression(value) : null;
     } else if (ts.isGetAccessorDeclaration(decl) || ts.isMethodDeclaration(decl) || ts.isFunctionDeclaration(decl)) {
       // Only getters are "values"; methods are handled when called.
       if (ts.isGetAccessorDeclaration(decl)) result = this.returnedLocator(decl);
-    } else if (ts.isPropertyAccessExpression(decl) && ts.isBinaryExpression(decl.parent) &&
-      decl.parent.operatorToken.kind === ts.SyntaxKind.EqualsToken) {
+    } else {
       // JS: this.button = page.locator(...)
-      result = this.locatorOfExpression(decl.parent.right);
+      const value = assignedValue(decl);
+      if (value) result = this.locatorOfExpression(value);
     }
 
     this.inProgress.delete(decl);
@@ -303,12 +302,13 @@ class Analyzer {
     return result;
   }
 
-  private locatorFromConstructor(prop: ts.PropertyDeclaration): LocatorUse | null {
+  /** `this.name = <expr>` inside the constructor of the property's class. */
+  private constructorAssignment(prop: ts.PropertyDeclaration): ts.Expression | undefined {
     const cls = prop.parent;
-    if (!ts.isClassLike(cls) || !prop.name || !ts.isIdentifier(prop.name)) return null;
+    if (!ts.isClassLike(cls) || !prop.name || !ts.isIdentifier(prop.name)) return undefined;
     const name = prop.name.text;
     const ctor = cls.members.find(ts.isConstructorDeclaration);
-    if (!ctor?.body) return null;
+    if (!ctor?.body) return undefined;
     let found: ts.Expression | undefined;
     const visit = (n: ts.Node): void => {
       if (found) return;
@@ -321,7 +321,7 @@ class Analyzer {
       ts.forEachChild(n, visit);
     };
     visit(ctor.body);
-    return found ? this.locatorOfExpression(found) : null;
+    return found;
   }
 
   private returnedLocator(fn: FnNode): LocatorUse | null {
@@ -533,10 +533,16 @@ class Analyzer {
     if (ts.isIdentifier(expr) || ts.isPropertyAccessExpression(expr) || ts.isElementAccessExpression(expr)) {
       const target = ts.isElementAccessExpression(expr) ? expr.argumentExpression : expr;
       const decl = ts.isElementAccessExpression(expr) ? this.elementDeclaration(expr) : this.declarationOf(target);
-      if (decl && (ts.isVariableDeclaration(decl) || ts.isPropertyAssignment(decl) || ts.isPropertyDeclaration(decl) ||
-        ts.isEnumMember(decl)) && decl.initializer) {
+      if (!decl) return undefined;
+      if ((ts.isVariableDeclaration(decl) || ts.isPropertyAssignment(decl) || ts.isEnumMember(decl)) && decl.initializer) {
         return this.resolveString(decl.initializer, depth + 1);
       }
+      if (ts.isPropertyDeclaration(decl)) {
+        const value = decl.initializer ?? this.constructorAssignment(decl);
+        return value ? this.resolveString(value, depth + 1) : undefined;
+      }
+      const assigned = assignedValue(decl);
+      if (assigned) return this.resolveString(assigned, depth + 1);
     }
     return undefined;
   }
@@ -613,6 +619,13 @@ function isValueReference(id: ts.Identifier): boolean {
     ts.isImportSpecifier(p) || ts.isImportClause(p) || ts.isGetAccessorDeclaration(p)) && p.name === id) return false;
   if (ts.isTypeReferenceNode(p) || ts.isQualifiedName(p)) return false;
   return true;
+}
+
+/** JS `this.x = value`: TypeScript reports either the assignment or its left side as the declaration. */
+function assignedValue(decl: ts.Node): ts.Expression | undefined {
+  const assignment = ts.isBinaryExpression(decl) ? decl : ts.isBinaryExpression(decl.parent) ? decl.parent : undefined;
+  if (!assignment || assignment.operatorToken.kind !== ts.SyntaxKind.EqualsToken) return undefined;
+  return assignment.left === decl || assignment === decl ? assignment.right : undefined;
 }
 
 function unwrapNoAwait(e: ts.Expression): ts.Expression {

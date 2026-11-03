@@ -63,3 +63,20 @@ describe('testRisk', () => {
     expect(testRisk([])).toBe(0);
   });
 });
+
+describe('page objects with constructor assignments', () => {
+  it('resolves locators and selectors assigned in a JavaScript constructor', () => {
+    const [test] = analyzeFiles([path.join(__dirname, 'fixtures', 'login.spec.js')], { cwd: path.join(__dirname, '..') });
+    expect(test.uses.map((u) => [u.code, u.score])).toEqual([
+      ["page.locator('form > div:nth-child(3) > button')", 100],
+      ['this.page.fill(this.emailInput, email)', 30], // #email (20) + legacy API (10)
+    ]);
+  });
+
+  it('resolves selector strings assigned in a TypeScript constructor', () => {
+    const [test] = analyzeFiles([path.join(__dirname, 'fixtures', 'search.spec.ts')], { cwd: path.join(__dirname, '..') });
+    const [use] = test.uses;
+    expect(use.code).toBe('this.page.locator(this.queryInput)');
+    expect(use.findings.some((f) => f.message.includes('.search-box'))).toBe(true);
+  });
+});
