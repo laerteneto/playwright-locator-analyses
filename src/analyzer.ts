@@ -86,7 +86,7 @@ function compilerOptions(cwd: string, tsconfig?: string): ts.CompilerOptions {
     esModuleInterop: true,
     skipLibCheck: true,
   };
-  const configPath = tsconfig ? path.resolve(cwd, tsconfig) : ts.findConfigFile(cwd, fs.existsSync);
+  const configPath = tsconfig ? path.resolve(cwd, tsconfig) : nearestConfigFile(cwd);
   if (configPath && fs.existsSync(configPath)) {
     const parsed = ts.getParsedCommandLineOfConfigFile(configPath, {}, {
       ...ts.sys,
@@ -95,6 +95,14 @@ function compilerOptions(cwd: string, tsconfig?: string): ts.CompilerOptions {
     if (parsed) return { ...defaults, ...parsed.options, allowJs: true, noEmit: true };
   }
   return { ...defaults, noEmit: true };
+}
+
+/** The closest tsconfig.json or jsconfig.json (JavaScript projects keep their import aliases there). */
+function nearestConfigFile(cwd: string): string | undefined {
+  const found = ['tsconfig.json', 'jsconfig.json']
+    .map((name) => ts.findConfigFile(cwd, fs.existsSync, name))
+    .filter((f): f is string => f !== undefined);
+  return found.sort((a, b) => path.dirname(b).length - path.dirname(a).length)[0];
 }
 
 class Analyzer {

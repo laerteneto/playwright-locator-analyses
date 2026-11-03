@@ -80,3 +80,11 @@ describe('page objects with constructor assignments', () => {
     expect(use.findings.some((f) => f.message.includes('.search-box'))).toBe(true);
   });
 });
+
+describe('JavaScript projects', () => {
+  it('follows import aliases from the nearest jsconfig.json', () => {
+    const dir = path.join(__dirname, 'fixtures', 'js-project');
+    const [test] = analyzeFiles([path.join(dir, 'checkout.spec.js')], { cwd: dir });
+    expect(test.uses.map((u) => [u.code, u.grade])).toEqual([["page.locator('.css-1x2y3z')", 'F']]);
+  });
+});
